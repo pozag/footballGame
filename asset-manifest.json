@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/pozag/footballGame/tree/master/static/css/main.34de6062.chunk.css",
-    "main.js": "/pozag/footballGame/tree/master/static/js/main.f6ebd390.chunk.js",
-    "main.js.map": "/pozag/footballGame/tree/master/static/js/main.f6ebd390.chunk.js.map",
-    "runtime~main.js": "/pozag/footballGame/tree/master/static/js/runtime~main.9fe62a47.js",
-    "runtime~main.js.map": "/pozag/footballGame/tree/master/static/js/runtime~main.9fe62a47.js.map",
-    "static/js/2.c4c4a084.chunk.js": "/pozag/footballGame/tree/master/static/js/2.c4c4a084.chunk.js",
-    "static/js/2.c4c4a084.chunk.js.map": "/pozag/footballGame/tree/master/static/js/2.c4c4a084.chunk.js.map",
-    "index.html": "/pozag/footballGame/tree/master/index.html",
-    "precache-manifest.c13defa3a9579e6a89c77fc19008e53f.js": "/pozag/footballGame/tree/master/precache-manifest.c13defa3a9579e6a89c77fc19008e53f.js",
-    "service-worker.js": "/pozag/footballGame/tree/master/service-worker.js",
-    "static/css/main.34de6062.chunk.css.map": "/pozag/footballGame/tree/master/static/css/main.34de6062.chunk.css.map"
+    "main.css": "/pozag/footballGame/static/css/main.34de6062.chunk.css",
+    "main.js": "/pozag/footballGame/static/js/main.f6ebd390.chunk.js",
+    "main.js.map": "/pozag/footballGame/static/js/main.f6ebd390.chunk.js.map",
+    "runtime~main.js": "/pozag/footballGame/static/js/runtime~main.fb7dbda6.js",
+    "runtime~main.js.map": "/pozag/footballGame/static/js/runtime~main.fb7dbda6.js.map",
+    "static/js/2.c4c4a084.chunk.js": "/pozag/footballGame/static/js/2.c4c4a084.chunk.js",
+    "static/js/2.c4c4a084.chunk.js.map": "/pozag/footballGame/static/js/2.c4c4a084.chunk.js.map",
+    "index.html": "/pozag/footballGame/index.html",
+    "precache-manifest.99ddda14ef1fdea1f646f95726558c12.js": "/pozag/footballGame/precache-manifest.99ddda14ef1fdea1f646f95726558c12.js",
+    "service-worker.js": "/pozag/footballGame/service-worker.js",
+    "static/css/main.34de6062.chunk.css.map": "/pozag/footballGame/static/css/main.34de6062.chunk.css.map"
   }
 }
