@@ -10,58 +10,6 @@ const Ordinals = [
     "Fourth",
 ];
 
-const Styles = {
-    flex: {
-	display: 'flex',
-    },
-    spaceBetween: {
-	display: 'flex',
-	justifyContent: 'space-between',
-    },
-    center: {
-	display: 'flex',
-	justifyContent: 'center',
-    },
-    column: {
-	display: 'flex',
-	flexDirection: 'column',
-    },
-    row: {
-	diplay: 'flex',
-	flexDirection: 'row',
-    },
-    underlineBold: {
-	fontWeight: 'bold',
-	textDecoration: 'underline',
-    },
-    bold: {
-	fontWeight: 'bold',
-    },
-    underline: {
-	textDecoration: 'underline',
-    },
-    popup: {
-	position: 'fixed',
-	width: '100%',
-	height: '100%',
-	top: 0,
-	left: 0,
-	right: 0,
-	bottom: 0,
-	margin: 'auto',
-	backgroundColor: 'rgba(0,0,0, 0.5)',
-    },
-    popupInner: {
-	position: 'absolute',
-	left: '25%',
-	right: '25%',
-	top: '25%',
-	bottom: '25%',
-	margin: 'auto',
-	background: 'white',
-    },
-};
-
 const NFL_TEAM_LIST = [
     "Arizona Cardinals",
     "Atlanta Falcons",
@@ -135,39 +83,38 @@ const specialPositions = [
 ];
 
 const Player = ({player, deactivatePlayer}) => (
-    <div onClick={deactivatePlayer}>{player.position}, {player.name}, {player.overall}, {player.isActive ? "Active" : "Inactive"}</div>
+    <div className='clickable' onClick={deactivatePlayer}>
+	{player.position}, {player.name}, {player.overall}, {player.isActive ? "Active" : "Inactive"}
+    </div>
 );
 
 const Team = ({team, teamOverall, deactivatePlayer, yourTeam, page}) => {
     return (
 	<>
-	    <div style={{display: 'flex', flexDirection: 'column'}}>
-	    {team.number === 0 ?
-	     <div style={Styles.bold}>{team.name}, Team Overall: {teamOverall}</div> :
-	     <div style={{display: 'flex', justifyContent: 'space-between'}}>
-		 <div style={Styles.bold}>{team.name}, Team Overall: {teamOverall}</div>
-		 {page ? team.name !== yourTeam.name ?
-		  <button
-		      onClick={() => {
-			  globe.changeBoard("tradePage");
-			  globe.setActiveTeam(team.name);
-		      }}>Offer Trade</button> : null : null}
-	     </div>
-	    }    
-	    <div>
-		{globe.sortPlayers(team.name).map(player => (
-		    <div key={player.name} style={{display: 'flex', justifyContent: 'space-between'}}>
-			<Player
-			    key={player.name}
-			    deactivatePlayer={() => deactivatePlayer(player)}
-			    player={player}
-			/>
-			{team.name === yourTeam.name ?
-			 <button onClick={() => globe.dropPlayer(team.name, player)}>Drop Player</button> : null}
-		    </div>
-		))}
-		<br />
-	    </div>
+	    <div className='col'>
+		<div className='spac'>
+		    <div className='headerTwo'>{team.name}, Team Overall: {teamOverall}</div>
+		    {page ? team.name !== yourTeam.name ?
+		     <div className='button'
+			  onClick={() => {
+			      globe.changeBoard("tradePage");
+			      globe.setActiveTeam(team.name);
+			  }}>Offer Trade</div> : null : null}
+		</div>
+		<div>
+		    {globe.sortPlayers(team.name).map(player => (
+			<div key={player.name} className='spac'>
+			    <Player
+				key={player.name}
+				deactivatePlayer={() => deactivatePlayer(player)}
+				player={player}
+			    />
+			    {team.name === yourTeam.name ?
+			     <div className='button' onClick={() => globe.dropPlayer(team.name, player)}>Drop Player</div> : null}
+			</div>
+		    ))}
+		    <br />
+		</div>
 	    </div>
 	</>
     )
@@ -176,15 +123,15 @@ const Team = ({team, teamOverall, deactivatePlayer, yourTeam, page}) => {
 const FreeAgents = ({freeAgents, yourTeam}) => (
     <React.Fragment>
 	{Object.values(freeAgents).map(player => 
-	    <div style={{display: 'flex', justifyContent: 'space-between'}} key={player.name}>
-		<div style={{display: 'flex', flex: 6}}>
+	    <div className='spac' key={player.name}>
+		<div className='bigFlex'>
 		    <Player
 			key={player.name}
 			player={player}
 		    />
 		</div>
-		<div>{player.cost}</div>
-		<button key={player.name+"button"} onClick={() => globe.addFreeAgent(yourTeam, player)}>Add Player</button>
+		<div>${player.cost}</div>
+		<div className='button' key={player.name+"button"} onClick={() => globe.addFreeAgent(yourTeam, player)}>Add Player</div>
 	    </div>
 	)}
     </React.Fragment>
@@ -192,7 +139,7 @@ const FreeAgents = ({freeAgents, yourTeam}) => (
 
 const Schedule = ({team}) => (
     <React.Fragment>
-	<div style={Styles.underlineBold} key={team.name + " schedule"}>{team.name} Schedule: </div>
+	<div className='headerTwo' key={team.name + "Schedule"}>{team.name} Schedule: </div>
 	{team.schedule.map(({week, home, vsName, result}) =>
 	    <div
 		key={"week" + week}
@@ -206,38 +153,43 @@ const Schedule = ({team}) => (
 
 const PageSwitcher = ({activePage, pages}) => (
     <React.Fragment>
-	<Menu
-	    list={pages}
-	    clickFn={(el) => globe.changeBoard(el)}
-	    styleFn={(el) => activePage === el ? 'blue' : 'black'}
-	    nameFn={(el) => el}
-	/>
-    </React.Fragment>
-);
-
-const Menu = ({list, clickFn, styleFn, nameFn}) => (
-    <React.Fragment>
 	<div className="menu">
-	    {Object.values(list).map((el, i) => (
-		<button
-		    key={i}
-		    style={{color: styleFn(el)}}
-		    onClick={() => clickFn(el)}
+	    {Object.values(pages).map(el => (
+		<div
+		    className={activePage === el ? 'activePage' : 'inactivePage'}
+		    key={el}
+		    onClick={() => globe.changeBoard(el)}
 		>
-		    {nameFn(el)}
-		</button>		    
+		    {el}
+		</div>		    
 	    ))}
 	</div>
     </React.Fragment>
 );
 
+/* const Menu = ({className, list, clickFn, styleFn, nameFn}) => (
+ *     <React.Fragment>
+ * 	<div className="menu">
+ * 	    {Object.values(list).map(el => (
+ * 		<button
+ * 		    className={className(el)}
+ * 		    key={el}
+ * 		    onClick={() => clickFn(el)}
+ * 		>
+ * 		    {nameFn(el)}
+ * 		</button>		    
+ * 	    ))}
+ * 	</div>
+ *     </React.Fragment>
+ * );
+ *  */
 const TeamSwitcher = ({activeTeam, teams}) => (
     <React.Fragment>
 	<PullDown
 	    selectedValue={activeTeam}
 	    list={Object.values(teams)}
 	    changeFn={(event) => globe.setActiveTeam(event.target.value)}
-	    name={"Switch active team: "}
+	    name={"Active team: "}
 	    nameFn={(el) => el.name}
 	/>
     </React.Fragment>
@@ -251,7 +203,7 @@ const SortSwitcher = ({primarySortBy, secondarySortBy, playerAttributes}) => (
 		    selectedValue={primarySortBy}
 		    list={playerAttributes}
 		    changeFn={(event) => globe.switchPrimarySortBy(event.target.value)}
-		    name={"Switch primary sort: "}
+		    name={"Primary sort: "}
 		    nameFn={(el) => el}
 		/>
 	    </div>
@@ -260,7 +212,7 @@ const SortSwitcher = ({primarySortBy, secondarySortBy, playerAttributes}) => (
 		    selectedValue={secondarySortBy}
 		    list={playerAttributes}
 		    changeFn={(event) => globe.switchSecondarySortBy(event.target.value)}
-		    name={"Switch secondary sort: "}
+		    name={"Secondary sort: "}
 		    nameFn={(el) => el}
 		/>
 	    </div>
@@ -270,20 +222,20 @@ const SortSwitcher = ({primarySortBy, secondarySortBy, playerAttributes}) => (
 
 const PullDown = ({selectedValue, list, changeFn, name, nameFn}) => (
     <React.Fragment>
-	<label>
+	<div>
 	    {name}
 	    <select value={selectedValue} onChange={changeFn}>		    
 		{list.map(el => 
 		    <option key={nameFn(el)} value={nameFn(el)}>{nameFn(el)}</option>
 		)}
 	    </select>
-	</label>
+	</div>
     </React.Fragment>
 );
 
 const Transactions = ({team}) => (
     <React.Fragment>
-	<div style={Styles.underlineBold}>Your Recent Roster Moves:</div>
+	<div className='headerTwo'>Your Recent Roster Moves:</div>
 	{team.transactions.slice().reverse().map((transaction, i) => {
 	    while (i < 4) {
 		if (transaction.type === "Added Free Agent" || transaction.type === "Dropped") {
@@ -292,12 +244,12 @@ const Transactions = ({team}) => (
 		    </div>;
 		} else if (transaction.type === "Trade") {		    
 		    return (
-			<div style={{display: 'flex', flexDirection:'column'}}>
-			    <div style={Styles.bold}>Traded </div> 
+			<div className='col'>
+			    <div className='headerThree'>Traded </div> 
 			    {transaction.playerList[0].map((player) => (
 				<div><Player player={player} deactivatePlayer={() => true} /></div>
 			    ))}
-			    <div style={Styles.bold}>to {transaction.teamList[1]} for </div>
+			    <div className='headerThree'>to {transaction.teamList[1]} for </div>
 			    {transaction.playerList[1].map((player) => (
 				<div><Player player={player} deactivatePlayer={() => true} /></div>
 			    ))}
@@ -314,14 +266,16 @@ const Trade = ({trade}) => (
     <React.Fragment>
 	<div>
 	    Send
- 	    {trade.player[0].map((player, i) => (
- 		<div key={i}><Player player={player} deactivatePlayer={() => true} /></div>
+ 	    {trade.player[0].map(player => (
+ 		<div key={player.name}><Player player={player} deactivatePlayer={() => true} /></div>
  	    ))}
 	    to {trade.teamNames[1]} for
-	    {trade.player[1].map((player, i) => (
- 		<div key={i}><Player player={player} deactivatePlayer={() => true} /></div>
+	    {trade.player[1].map(player => (
+ 		<div key={player.name}><Player player={player} deactivatePlayer={() => true} /></div>
  	    ))}
-	    <button key="button" onClick={() => globe.acceptTrade(trade)}>Accept Trade</button>
+	    <div className='button' onClick={() => globe.acceptTrade(trade)}>
+		Accept Trade
+	    </div>
 	</div>
     </React.Fragment>
 );
@@ -329,37 +283,39 @@ const Trade = ({trade}) => (
 const Trades = ({trades}) => (
     <React.Fragment>
 	<div>
-	    <div style={Styles.underlineBold}>Trades:</div>
-	    <div style={Styles.bold}>Offered Trades:</div>
+	    <div className='headerTwo'>Trades:</div>
+	    <div className='headerThree'>Offered Trades:</div>
 	    {trades.tradesFrom.map((trade, i) =>		
 		<div key={"trade" + i}><Trade trade={trade} /></div>
 	    )}
-	    <div style={Styles.bold}>Received Trades:</div>
+	    <div className='headerThree'>Received Trades:</div>
 	</div>
     </React.Fragment>
 );
 
 const MainPage = ({teams, yourTeam, week}) => (
     <React.Fragment>
-	<div style={{...Styles.center, ...Styles.underlineBold, color: 'blue'}}>Week {week + 1}</div>
-	<div style={{display: 'flex', justifyContent: 'space-between'}}>
+	<div className='spac'>
 	    <div><Schedule team={teams[yourTeam]} setActiveTeam={() => true}/></div>
-	    <div style={{display: 'flex', flexDirection: 'column'}}>
-		<div style={{display: 'flex', flexDirection: 'column', flex: 1}}><Transactions team={teams[yourTeam]} /></div>
-		<div style={{...Styles.column, flex: 1, overflow: 'hidden', flexBasis: '20px'}}>
+	    <div className='col'>
+		<div className='powerCol'>
+		    <Transactions team={teams[yourTeam]} />
+		</div>
+		<div className='hiddenPowerCol'>
 		    <Trades trades={teams[yourTeam].trades}/>
 		</div>
 	    </div>
 	</div>
 	<br />
-	<button onClick={() => globe.changeBoard("gamePage")}>Simulate Next Week</button>
+	<div className='button' onClick={() => globe.changeBoard("gamePage")}>
+	    Simulate Next Week
+	</div>
     </React.Fragment>
 );
 
 const RosterPage = ({teams, activeTeam, yourTeam, primarySortBy, secondarySortBy, playerAttributes}) => (
     <React.Fragment>
-	<div style={Styles.underlineBold}>Team Rosters</div>
-	<div><TeamSwitcher teams={teams} activeTeam={activeTeam} /></div>
+	<TeamSwitcher teams={teams} activeTeam={activeTeam} />
 	<SortSwitcher primarySortBy={primarySortBy} secondarySortBy={secondarySortBy} playerAttributes={playerAttributes} />
 	<Team
 	    key={activeTeam.name}
@@ -376,14 +332,13 @@ const RosterPage = ({teams, activeTeam, yourTeam, primarySortBy, secondarySortBy
 
 const FreeAgentPage = ({freeAgents, yourTeam}) => (
     <React.Fragment>
-	<h1 style={{textDecoration: 'underline'}}>Free Agents</h1>
+	<div className={'header'}>Free Agents</div>
 	<FreeAgents freeAgents={freeAgents} yourTeam={yourTeam} />
     </React.Fragment>
 );
 
 const SchedulePage = ({page, teams, activeTeam}) => (
     <React.Fragment>
-	<h1 style={{textDecoration: 'underline'}}>Upcoming Schedule</h1>
 	<TeamSwitcher teams={teams} activeTeam={activeTeam} />
 	<Schedule team={teams[activeTeam]} />
     </React.Fragment>
@@ -391,15 +346,15 @@ const SchedulePage = ({page, teams, activeTeam}) => (
 
 const ProposedTrade = ({proposedTrade, yourTeam, activeTeam}) => (
     <React.Fragment>
-	<div style={{display: 'flex', justifyContent: 'space-between'}}>
-	    <div style={{display: 'flex', flexDirection: 'column', flex: 1}}>Your Team:
+	<div className='spac'>
+	    <div className='powerCol'>Your Team:
 		<div>
 		    {proposedTrade.map(({player, team}) => (
 			team === yourTeam ?
 			<Player key={player.name} player={player} deactivatePlayer={() => globe.addToProposedTrade(player)}/> : null))}
 		</div>
 	    </div>
-	    <div style={{display: 'flex', flexDirection: 'column', flex: 1}}>{activeTeam}:
+	    <div className='powerCol'>{activeTeam}:
 		<div>
 	    	    {proposedTrade.map(({player, team}) => (
 			team === activeTeam ?
@@ -413,8 +368,8 @@ const ProposedTrade = ({proposedTrade, yourTeam, activeTeam}) => (
 const TradePage = ({yourTeam, activeTeam, teams, proposedTrade}) => (
     <React.Fragment>
 	<TeamSwitcher teams={teams} activeTeam={activeTeam} />
-	<div style={{display: 'flex', justifyContent: 'space-between'}}>
-	    <div style={{display: 'flex', flex: 1}}>
+	<div className='spac'>
+	    <div className='bigFlex'>
 		<Team
 		    key={yourTeam}
 		    team={teams[yourTeam]}
@@ -423,7 +378,7 @@ const TradePage = ({yourTeam, activeTeam, teams, proposedTrade}) => (
 		    yourTeam={yourTeam}
 		/>
 	    </div>
-	    <div style={{display: 'flex', flex: 1}}>
+	    <div className='bigFlex'>
 		<Team
 		    key={activeTeam}
 		    team={teams[activeTeam]}
@@ -433,9 +388,14 @@ const TradePage = ({yourTeam, activeTeam, teams, proposedTrade}) => (
 		/>
 	    </div>
 	</div>
-	<div style={Styles.bold}>Proposed Trade:</div>
+	<div className='headerThree'>Proposed Trade:</div>
 	<div><ProposedTrade proposedTrade={proposedTrade} yourTeam={yourTeam} activeTeam={activeTeam} /></div>
-	<button onClick={() => globe.offerTrade(proposedTrade, yourTeam, activeTeam)}>Propose Trade</button>
+	<div
+	    className='button'
+	    onClick={() => globe.offerTrade(proposedTrade, yourTeam, activeTeam)}
+	>
+	    Propose Trade
+	</div>
     </React.Fragment>
 );
 
@@ -471,28 +431,33 @@ const Board = ({state}) => {
 		   proposedTrade={state.proposedTrade}
 	/>
     } else if (state.page === "gamePage") {
-	return <Game
-		   yourTeam={state.teams[state.yourTeam]}
-		   opposingTeam={state.teams[state.teams[state.yourTeam].schedule[state.week].vsName]}
-	/>
-
+	return (
+	    <div className='gamePage'>
+		<Game
+		    homeGame={state.teams[state.yourTeam].schedule[state.week].home}
+		    yourTeam={state.teams[state.yourTeam]}
+		    opposingTeam={state.teams[state.teams[state.yourTeam].schedule[state.week].vsName]}
+		/>
+	    </div>
+	)
     }
 };
 
-const TopInfo = ({activePage, pages, yourTeam, teams}) => {
+const TopInfo = ({activePage, pages, yourTeam, teams, week}) => {
     const teamRecord = globe.calculateTeamRecord(teams[yourTeam]);
     return (
 	<React.Fragment>
-	    <div style={{display: 'flex', justifyContent: 'space-between'}}>
+	    <div className='spac'>
 		<div>
 		    <PageSwitcher activePage={activePage} pages={pages} />
 		</div>
-		<div style={{fontSize: '0.8em'}}>
+		<div className='info'>
 		    <div>Your Team: {yourTeam}</div>
 		    <div>Record: {teamRecord[0]}-{teamRecord[1]}-{teamRecord[2]}</div>
 		    <div>Money: {teams[yourTeam].money}</div>
 		</div>
 	    </div>
+	    <div className='centerHeaderTwo'>Week {week + 1}</div>
 	</React.Fragment>
     );
 };
@@ -904,9 +869,11 @@ class Globe {
 	if (team.players.length === 0) {
 	    return 0;
 	}
-	return Math.floor(Object.values(team.players)
+	
+	const overall = Math.floor(Object.values(team.players)
 			      .map((player) => player.isActive ? player.overall : 0)
-			      .reduce((acc, x) => acc + x) / this.findNumberOfActivePlayers(team));
+					 .reduce((acc, x) => acc + x) / this.findNumberOfActivePlayers(team));
+	return Number.isNaN(overall) ? 0 : overall;
     };
     
     changeBoard = (request) => {
@@ -1027,6 +994,9 @@ class Game extends React.Component {
 	    opposingScore: 0,
 	    possesion: Math.random() < .5 ? true : false, //true if you have ball
 	};
+	this.oldLineOfScrimmage = 35;
+	this.oldFirstDownLine = 45;
+	this.homeGame = props.homeGame;
 	this.possesionAfterHalfTime = !this.state.possesion;
 	this.yourPlay = "kickoff";
 	this.opposingPlay = "kickReturn";
@@ -1053,16 +1023,36 @@ class Game extends React.Component {
 	};
 	this.isKickOff = true;
 	this.over = false;
+	this.driveTowards = true; // true for right side
 	this.pickYourPlay = () => {
 	    if (this.over) {
-		return;
+		return (
+		    <>
+		    	<div className='centerBigFlex'>
+			    <div
+				className='spaceButton'
+				onClick={() => globe.changeBoard("Main Page")}
+			    >
+				Main Page
+			    </div>
+			</div>
+		    </>
+		)
 	    }
 	    const shownPlays = this.isKickOff ? this.plays.kickOff : this.state.possesion ? this.plays.offense : this.plays.defense;
 	    return (
 		<>
-		{shownPlays.map((play) => 
-		    <button key={play} onClick={() => this.pickPlay(play)}>{play}</button>
-		)}
+		    <div className='centerBigFlex'>
+			{shownPlays.map((play) => 
+			    <div
+				className='spaceButton'
+				key={play}
+				onClick={() => this.pickPlay(play)}
+			    >
+				{play}
+			    </div>
+			)}
+		    </div>
 	        </>
 	    );
 	};
@@ -1091,7 +1081,7 @@ class Game extends React.Component {
 	if (this.isKickOff) {
 	    this.opposingPlay = "kickOff";
 	} else if (this.state.down === 4) {
-	    if (this.state.lineOfScrimmage > 60) {
+	    if (this.state.lineOfScrimmage > 30) {
 		this.opposingPlay = "fg";
 	    } else {
 		this.opposingPlay = "punt";
@@ -1119,6 +1109,7 @@ class Game extends React.Component {
 	} else if (this.state.quarter === 2) {
 	    result += "We are heading into halftime and boy do we have a show for you. Stay tuned and we will be right back after this fifteen minute, commercial filled break.";
 	    this.setState({possesion: this.possesionAfterHalfTime});
+	    this.driveTowards = false;
 	    this.isKickOff = true;
 	} else if (this.state.quarter === 3) {
 	    result += "And, boy do we have a game on our hands here. So much to look forward to in the fourth and final quarter.";
@@ -1134,7 +1125,7 @@ class Game extends React.Component {
 	    down: this.state.quarter === 2 ? 1 : this.state.down,
 	    lineOfScrimmage: this.state.quarter === 2 ? 35 : this.state.lineOfScrimmage,
 	    firstDownLine: this.state.quarter === 2 ? 45 : this.state.firstDownLine,
-	});	    
+	});
     }
 		
     pass(passType = "Medium") {
@@ -1202,24 +1193,27 @@ class Game extends React.Component {
     }
 
     changeYards(yards) {	
-	this.setState(
-	    {
+	this.oldLineOfScrimmage = this.state.lineOfScrimmage;
+	this.oldFirstDownLine = this.state.firstDownLine;
+	if (this.state.lineOfScrimmage + yards >= 100) {
+	    this.touchdown();
+	} else if (this.state.lineOfScrimmage + yards >= this.state.firstDownLine) {
+	    this.setState({
+		lineOfScrimmage: this.state.lineOfScrimmage + yards,
+		firstDownLine: this.state.lineOfScrimmage + yards + 10,
+		down: 1,
+	    });
+	} else if (this.state.down + 1 > 4) {
+	    this.setState(
+		{lineOfScrimmage: this.state.lineOfScrimmage + yards},
+		() => this.changePossesion(" Turnover on downs!")
+	    );
+	} else {
+	    this.setState({
 		lineOfScrimmage: this.state.lineOfScrimmage + yards,
 		down: this.state.down + 1,
-	    },
-	    () => {
-		if (this.state.lineOfScrimmage >= 100) {
-		    this.touchdown();
-		} else if (this.state.lineOfScrimmage >= this.state.firstDownLine) {
-		    this.setState({
-			firstDownLine: this.state.lineOfScrimmage + 10,
-			down: 1,
-		    });
-		} else if (this.state.down > 4) {
-		    this.changePossesion(" Turnover on downs!");
-		}
-	    }
-	);
+	    });
+	}
     }
 
     run() {
@@ -1286,6 +1280,7 @@ class Game extends React.Component {
 	    lineOfScrimmage: 100 - this.state.lineOfScrimmage,
 	    firstDownLine: 110 - this.state.lineOfScrimmage,
 	});
+	this.driveTowards = !this.driveTowards;
     }
     
     setResult(type, success, firstDown, yards, offender, defender) {
@@ -1383,6 +1378,9 @@ class Game extends React.Component {
 	    lineOfScrimmage: yard,
 	    firstDownLine: yard + 10,
 	}, () => this.timeRunOff(Math.floor(Math.random() * 5) + 4, false));
+	this.driveTowards = !this.driveTowards;
+	this.oldLineOfScrimmage = yard;
+	this.oldFirstDownLine = yard + 10;
     }
     
     touchdown(result = "") {
@@ -1392,7 +1390,7 @@ class Game extends React.Component {
     fg() {
 	this.setState(
 	    {result: ""},
-	    () => this.fieldGoal(3, this.state.lineOfScrimmage, "field goal")
+	    () => this.fieldGoal(3, 100 - this.state.lineOfScrimmage, "field goal")
 	);
     }
     
@@ -1413,8 +1411,8 @@ class Game extends React.Component {
 	    opposingScore: !this.state.possesion ? this.state.opposingScore + point : this.state.opposingScore,
 	    result: this.state.result + result,
 	    down: 1,
-	    lineOfScrimmage: 65,
-	    firstDownLine: 75,
+	    lineOfScrimmage: 35,
+	    firstDownLine: 45,
 	}, callback);
     }
     
@@ -1434,16 +1432,6 @@ class Game extends React.Component {
     render() {
 	return (
 	    <>
-		<div>GAME</div>
-		<div>SCORE: {this.yourTeam.name}: {this.state.yourScore} {this.opposingTeam.name}: {this.state.opposingScore}</div>
-		<div>Quarter: {this.state.quarter}</div>
-		<div>Time: {this.getTime()}</div>
-		<div>Ball on {this.getYard()}</div>
-		<div>Down: {Ordinals[this.state.down - 1] + " & " +
-			    (this.state.firstDownLine >= 100 ? "goal" :
-			    Math.abs(this.state.lineOfScrimmage - this.state.firstDownLine))}</div>
-		<div>{this.state.possesion ? this.yourTeam.name : this.opposingTeam.name} have the ball</div>
-		{this.pickYourPlay()}
 		{/* <button onClick={() => this.endGame()}>End Game</button>
 		    <button onClick={() => this.pass("Medium")}>Pass</button>
 		    <button onClick={() => this.setState({result: ""}, () => this.fieldGoal(3, 100 - this.state.lineOfScrimmage, "field goal"))}>FIELD GOAL</button>
@@ -1451,12 +1439,234 @@ class Game extends React.Component {
 		    <button onClick={() => this.touchdown()}>TOUCHDOWN</button>
 		    <button onClick={() => this.kickOff("kick")}>KICKOFF</button>
 		    <button onClick={() => this.kickOff("punt")}>Punt</button> */}
-		<div>{this.state.result}</div>
+		<ScoreBoard
+		    homeGame={this.homeGame}
+		    possesion={this.state.possesion}
+		    time={this.getTime()}
+		    yourScore={this.state.yourScore}
+		    opposingScore={this.state.opposingScore}
+		    down={this.state.down}
+		    lineOfScrimmage={this.state.lineOfScrimmage}
+		    firstDownLine={this.state.firstDownLine}
+		    quarter={this.state.quarter}
+		/>
+		<FootballField
+		    lineOfScrimmage={this.driveTowards ? this.state.lineOfScrimmage : 100 - this.state.lineOfScrimmage}
+		    firstDownLine={this.driveTowards ? this.state.firstDownLine : 100 - this.state.firstDownLine}
+		    homeTeamName={this.homeGame ? this.yourTeam.name : this.opposingTeam.name}
+		    oldLineOfScrimmage={this.driveTowards ? this.oldLineOfScrimmage : 100 - this.oldLineOfScrimmage}
+		    oldFirstDownLine={this.driveTowards ? this.oldFirstDownLine : 100 - this.oldFirstDownLine}
+		/>
+		{this.pickYourPlay()}
+		<div className='result'>{this.state.result}</div>
 	    </>
 	);
-    }
-    
+    }    
 }
+
+const ScoreBoard = ({homeGame, possesion, time, yourScore, opposingScore, down, lineOfScrimmage, firstDownLine, quarter}) => (
+    <>
+	<div className='flexCent'>
+	    <div className='board'>
+		<div className='boardRow'>
+		    <div className='scoreBoardBox'>
+			<div className='scoreBoardTitle'>Home</div>
+			<div className='scoreBoardDataRow'>
+			    <div className='scoreBoardData'>
+				{homeGame ? yourScore : opposingScore}
+			    </div>
+			    <div className='scoreBoardIcon'>
+				{homeGame ? possesion ? '🏈' : null : !possesion ? '🏈' : null}
+			    </div>
+			</div>
+		    </div>			
+		    <div className='bigScoreBoardBox'>
+			<div className='scoreBoardTitle'>Time</div>
+			<div className='scoreBoardData'>{time}</div>
+		    </div>			
+		    <div className='scoreBoardBox'>
+			<div className='scoreBoardTitle'>Visitor</div>
+			<div className='scoreBoardDataRow'>
+			    <div className='scoreBoardIcon'>
+				{!homeGame ? possesion ? '🏈' : null : !possesion ? '🏈' : null}
+			    </div>
+			    <div className='scoreBoardData'>
+				{!homeGame ? yourScore : opposingScore}
+			    </div>
+			</div>			    
+		    </div>			
+		</div>
+		<div className='boardRow'>
+		    <div className='scoreBoardBox'>
+			<div className='scoreBoardTitle'>Down</div>
+			<div className='scoreBoardData'>{down}</div>
+		    </div>
+		    <div className='scoreBoardBox'>
+			<div className='scoreBoardTitle'>Ball On</div>
+			<div className='scoreBoardData'>{lineOfScrimmage}</div>
+		    </div>			
+		    <div className='scoreBoardBox'>
+			<div className='scoreBoardTitle'>To Go</div>
+			<div className='scoreBoardData'>{firstDownLine - lineOfScrimmage}</div>
+		    </div>			
+		    <div className='scoreBoardBox'>
+			<div className='scoreBoardTitle'>Quarter</div>
+			<div className='scoreBoardData'>{quarter}</div>
+		    </div>			
+		</div>
+	    </div>
+	</div>
+    </>    
+);
+
+const FootballField =  ({lineOfScrimmage, firstDownLine, homeTeamName, oldLineOfScrimmage, oldFirstDownLine}) => {
+    console.log(firstDownLine, oldFirstDownLine);
+    console.log(lineOfScrimmage, oldLineOfScrimmage);
+    firstDownLine = firstDownLine >= 100 ? 100 : firstDownLine;
+    firstDownLine = firstDownLine <= 0 ? 0 : firstDownLine;
+    const counter = new Array(9).fill(0);
+    const teamName = homeTeamName.split(" ").pop();
+    return (
+	<>
+	    <div className="fieldContainer">
+		<svg height="10em" width={796}>
+		    <rect
+			width={64}
+			height="10em"
+			fill="DarkGreen"
+			stroke="white"
+			strokeWidth={5}
+		    />
+		    <text
+			x={160}
+			y={-26}
+			fill="white"
+			transform={"rotate(90)"}
+			textAnchor="middle"
+			fontWeight= "bold"
+			fontFamily= "'Istok Web', Helvetica, sans-serif"
+		    >
+			{teamName}
+		    </text>
+		    <rect
+			width={64}
+			height="10em"
+			fill="DarkGreen"
+			transform={"translate("+ 32 * 22 +")"}
+			stroke="white"
+			strokeWidth={5}
+		    />		
+		    <text
+			x={-160}
+			y={32 * 23 + 12}
+			fill="white"
+			transform={"rotate(-90)"}
+			textAnchor="middle"
+			fontWeight= "bold"
+			fontFamily= "'Istok Web', Helvetica, sans-serif"
+		    >
+			{teamName}
+		    </text>
+		    <rect
+			width={32 * 20}
+			height="10em"
+			fill="ForestGreen"
+			transform={"translate(64)"}
+			stroke="white"
+			strokeWidth={4}
+		    />
+		    <line
+			x1={64}
+			x2={32 * 23}
+			y1={0}
+			y2={0}
+			stroke="white"
+			strokeWidth={"20em"}
+			strokeDasharray="2 30"
+		    />
+		    <line
+			x1={64}
+			x2={32 * 22}
+			y1={0}
+			y2={0}
+			stroke="white"
+			strokeWidth={8}
+			strokeDasharray="1 5"
+		    />
+		    <line
+			x1={64}
+			x2={32 * 22}
+			y1={120}
+			y2={120}
+			stroke="white"
+			strokeWidth={8}
+			strokeDasharray="1 5"
+		    />
+		    <line
+			x1={64}
+			x2={32 * 22}
+			y1={200}
+			y2={200}
+			stroke="white"
+			strokeWidth={8}
+			strokeDasharray="1 5"
+		    />
+		    <line
+			x1={64}
+			x2={32 * 22}
+			y1={320}
+			y2={320}
+			strokeWidth={8}
+			stroke="white"
+			strokeDasharray="1 5"
+		    />
+		    {counter.map((el, i) => {
+			const num = (i + 1) * 10;
+			return (
+			    <text
+				key={"topYard" + num}
+				x={i * 64 + 112}
+				y={32}
+				fill="white"
+			    >
+				{num < 50 ? num : 50 - num % 50}
+			    </text>
+			)})}
+		    {counter.map((el, i) => {
+			const num = (i + 1) * 10;
+			return (
+			    <text
+				key={"bottomYard" + num}
+				x={i * -64 - 128}
+				y={-288}
+				fill="white"
+				textAnchor="middle"
+				transform="rotate(180)"
+			    >
+				{num < 50 ? num : 50 - num % 50}
+			    </text>
+			)})}
+		    <rect
+			className='animated'
+			x={lineOfScrimmage * 6.5 + 64}
+			y={0}
+			width={2}
+			height={320}
+			fill={"blue"}
+		    />
+		    <rect
+			className='animated'
+			x={firstDownLine * 6.5 + 64}
+			y={0}
+			width={2}
+			height={320}
+			fill={"yellow"}
+		    />
+		</svg>
+	    </div>
+	</>
+    )
+};
 
 class GameState extends React.Component {
     constructor(props) {
@@ -1479,7 +1689,8 @@ class GameState extends React.Component {
     render() {
 	return (
 	    <React.Fragment>
-		<TopInfo activePage={this.state.page} pages={this.state.pages} teams={this.state.teams} yourTeam={this.state.yourTeam} />
+		{this.state.page !== "gamePage" ?
+		 <TopInfo activePage={this.state.page} pages={this.state.pages} teams={this.state.teams} yourTeam={this.state.yourTeam} week={this.state.week}/> : null}
 		<Board state={this.state} />
 	    </React.Fragment>
 	);

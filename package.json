@@ -2,7 +2,7 @@
   "name": "my-app",
   "version": "0.1.0",
   "private": true,
-  "homepage":"https://github.com/pozag/footballGame",
+  "homepage":"https://pozag.github.io/footballGame",
   "dependencies": {
     "@material-ui/core": "^4.3.1",
     "react": "^16.8.6",
