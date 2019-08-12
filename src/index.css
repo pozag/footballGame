@@ -191,6 +191,12 @@ body {
     flex: 1;
 }
 
+.playButtons {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+}
+
 .centerBigFlex {
     display: flex;
     flex: 1;
