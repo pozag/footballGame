@@ -76,13 +76,13 @@ const specialPositions = [
     "PR",
 ];
 
-const Player = ({player, deactivatePlayer}) => (
-    <div className='clickable' onClick={deactivatePlayer}>
+const Player = ({player, clickPlayer, className}) => (
+    <div className={className} onClick={clickPlayer}>
 	{player.position}, {player.name}, {player.overall}, {player.isActive ? "Active" : "Inactive"}
     </div>
 );
 
-const Team = ({team, teamOverall, deactivatePlayer, yourTeam, page}) => {
+const Team = ({team, teamOverall, clickPlayer, yourTeam, page, className}) => {
     return (
 	<>
 	    <div className='col'>
@@ -100,11 +100,17 @@ const Team = ({team, teamOverall, deactivatePlayer, yourTeam, page}) => {
 			<div key={player.name} className='spac'>
 			    <Player
 				key={player.name}
-				deactivatePlayer={() => deactivatePlayer(player)}
+				clickPlayer={() => clickPlayer(player)}
 				player={player}
+				className={className}
 			    />
 			    {team.name === yourTeam.name ?
-			     <div className='button' onClick={() => globe.dropPlayer(team.name, player)}>Drop Player</div> : null}
+			     (<div className='flex'>
+				 <div className='button' onClick={() => globe.deactivatePlayer(team.name, player.name)}>
+				     {player.isActive ? "Deactivate" : "Activate"}
+				 </div>
+				 <div className='button' onClick={() => globe.dropPlayer(team.name, player)}>Drop Player</div>
+			     </div>): null}
 			</div>
 		    ))}
 		    <br />
@@ -161,22 +167,6 @@ const PageSwitcher = ({activePage, pages}) => (
     </React.Fragment>
 );
 
-/* const Menu = ({className, list, clickFn, styleFn, nameFn}) => (
- *     <React.Fragment>
- * 	<div className="menu">
- * 	    {Object.values(list).map(el => (
- * 		<button
- * 		    className={className(el)}
- * 		    key={el}
- * 		    onClick={() => clickFn(el)}
- * 		>
- * 		    {nameFn(el)}
- * 		</button>		    
- * 	    ))}
- * 	</div>
- *     </React.Fragment>
- * );
- *  */
 const TeamSwitcher = ({activeTeam, teams}) => (
     <React.Fragment>
 	<PullDown
@@ -230,59 +220,64 @@ const PullDown = ({selectedValue, list, changeFn, name, nameFn}) => (
 const Transactions = ({team}) => (
     <React.Fragment>
 	<div className='headerTwo'>Your Recent Roster Moves:</div>
-	{team.transactions.slice().reverse().map((transaction, i) => {
-	    while (i < 4) {
-		if (transaction.type === "Added Free Agent" || transaction.type === "Dropped") {
-		    return <div key={transaction.type + transaction.player.name}>
-			<div key={transaction.type + transaction.player.name}>{transaction.type} {transaction.player.name}</div>
-		    </div>;
-		} else if (transaction.type === "Trade") {		    
-		    return (
-			<div className='col'>
-			    <div className='headerThree'>Traded </div> 
-			    {transaction.playerList[0].map((player) => (
-				<div><Player player={player} deactivatePlayer={() => true} /></div>
-			    ))}
-			    <div className='headerThree'>to {transaction.teamList[1]} for </div>
-			    {transaction.playerList[1].map((player) => (
-				<div><Player player={player} deactivatePlayer={() => true} /></div>
-			    ))}
-			</div>
-		    );		
-		}
-	    }
-	    return null;
-	})}
+
+	<div className='content'>
+	    <div className='box'>
+		{team.transactions.slice().reverse().map((transaction, i) => {
+		    while (i < 4) {
+			if (transaction.type === "Added Free Agent" || transaction.type === "Dropped") {
+			    return <div key={transaction.type + transaction.player.name}>
+				<div key={transaction.type + transaction.player.name}>{transaction.type} {transaction.player.name}</div>
+			    </div>;
+			} else if (transaction.type === "Trade") {		    
+			    return (
+				<div key={transaction.type+i} className='col'>
+				    <div className='headerThree'>Traded </div> 
+				    {transaction.playerList[0].map((player) => (
+					<Player key={player.name} player={player} clickPlayer={() => true} />
+				    ))}
+				    <div className='headerThree'>to {transaction.teamList[1]} for </div>
+				    {transaction.playerList[1].map((player) => (
+					<Player key={player.name} player={player} clickPlayer={() => true} />
+				    ))}
+				</div>
+			    );		
+			}
+		    }
+		    return null;
+		})}
+	    </div>
+	</div>
     </React.Fragment>
 );
 
 const Trade = ({trade}) => (
     <React.Fragment>
 	<div>
-	    Send
+	    <div className='headerThree'>Send</div>
  	    {trade.player[0].map(player => (
- 		<div key={player.name}><Player player={player} deactivatePlayer={() => true} /></div>
+ 		<Player key={player.name} player={player} clickPlayer={() => true} />
  	    ))}
-	    to {trade.teamNames[1]} for
+	    <div className='headerThree'>to {trade.teamNames[1]} for</div>
 	    {trade.player[1].map(player => (
- 		<div key={player.name}><Player player={player} deactivatePlayer={() => true} /></div>
+ 		<Player key={player.name} player={player} clickPlayer={() => true} />
  	    ))}
-	    <div className='button' onClick={() => globe.acceptTrade(trade)}>
-		Accept Trade
-	    </div>
+	    <div className='button' onClick={() => globe.acceptTrade(trade)}>Accept Trade</div>
 	</div>
     </React.Fragment>
 );
 
 const Trades = ({trades}) => (
     <React.Fragment>
-	<div>
-	    <div className='headerTwo'>Trades:</div>
-	    <div className='headerThree'>Offered Trades:</div>
-	    {trades.tradesFrom.map((trade, i) =>		
-		<div key={"trade" + i}><Trade trade={trade} /></div>
-	    )}
-	    <div className='headerThree'>Received Trades:</div>
+	<div className='content'>
+	    <div className='box'>
+		<div className='headerTwo'>Trades:</div>
+		<div className='headerThree'>Offered Trades:</div>
+		{trades.tradesFrom.map((trade, i) =>		
+		    <div key={"trade" + i}><Trade trade={trade} /></div>
+		)}
+		<div className='headerThree'>Received Trades:</div>
+	    </div>
 	</div>
     </React.Fragment>
 );
@@ -315,11 +310,10 @@ const RosterPage = ({teams, activeTeam, yourTeam, primarySortBy, secondarySortBy
 	    key={activeTeam.name}
 	    teamOverall = {globe.calculateTeamOverall(teams[activeTeam])}
 	    team={teams[activeTeam]}
-	    deactivatePlayer={activeTeam === yourTeam.name ?
-			  (player) => globe.deactivatePlayer(activeTeam, player.name) :
-				      () => true}
+	    clickPlayer={() => true}
 	    yourTeam={yourTeam}
 	    page={true}
+            className={'text'}
 	/>	
     </React.Fragment>
 );
@@ -340,19 +334,27 @@ const SchedulePage = ({page, teams, activeTeam}) => (
 
 const ProposedTrade = ({proposedTrade, yourTeam, activeTeam}) => (
     <React.Fragment>
+	<div className='headerTwo'>Proposed Trade:</div>
 	<div className='spac'>
-	    <div className='powerCol'>Your Team:
+	    <div className='powerCol'>
+		<div className='headerThree'>{yourTeam}:</div>
 		<div>
 		    {proposedTrade.map(({player, team}) => (
 			team === yourTeam ?
-			<Player key={player.name} player={player} deactivatePlayer={() => globe.addToProposedTrade(player)}/> : null))}
+			<Player key={player.name} player={player} clickPlayer={() => globe.addToProposedTrade(player)}/> : null))}
 		</div>
 	    </div>
-	    <div className='powerCol'>{activeTeam}:
+	    <div className='powerCol'>
+		<div className='headerThree'>{activeTeam}:</div>
 		<div>
 	    	    {proposedTrade.map(({player, team}) => (
 			team === activeTeam ?
-			<Player key={player.name} player={player} deactivatePlayer={() => globe.addToProposedTrade(player)}/> : null))}
+			<Player
+			    key={player.name}
+			    player={player}
+			    clickPlayer={() => globe.addToProposedTrade(player)}
+			    className='clickable'
+			/> : null))}
 		</div>
 	    </div>
 	</div>
@@ -361,15 +363,22 @@ const ProposedTrade = ({proposedTrade, yourTeam, activeTeam}) => (
 
 const TradePage = ({yourTeam, activeTeam, teams, proposedTrade}) => (
     <React.Fragment>
-	<TeamSwitcher teams={teams} activeTeam={activeTeam} />
+	<ProposedTrade proposedTrade={proposedTrade} yourTeam={yourTeam} activeTeam={activeTeam} />
+	<div
+	    className='button'
+	    onClick={() => globe.offerTrade(proposedTrade, yourTeam, activeTeam)}
+	>
+	    Propose Trade
+	</div>
 	<div className='spac'>
 	    <div className='bigFlex'>
 		<Team
 		    key={yourTeam}
 		    team={teams[yourTeam]}
 		    teamOverall={globe.calculateTeamOverall(teams[yourTeam])}
-		    deactivatePlayer={(player) => globe.addToProposedTrade(player, yourTeam)}
+		    clickPlayer={(player) => globe.addToProposedTrade(player, yourTeam)}
 		    yourTeam={yourTeam}
+		    className='clickable'
 		/>
 	    </div>
 	    <div className='bigFlex'>
@@ -377,18 +386,11 @@ const TradePage = ({yourTeam, activeTeam, teams, proposedTrade}) => (
 		    key={activeTeam}
 		    team={teams[activeTeam]}
 		    teamOverall={globe.calculateTeamOverall(teams[activeTeam])}
-		    deactivatePlayer={(player) => globe.addToProposedTrade(player, activeTeam)}
+		    clickPlayer={(player) => globe.addToProposedTrade(player, activeTeam)}
 		    yourTeam={yourTeam}
+		    className='clickable'
 		/>
 	    </div>
-	</div>
-	<div className='headerThree'>Proposed Trade:</div>
-	<div><ProposedTrade proposedTrade={proposedTrade} yourTeam={yourTeam} activeTeam={activeTeam} /></div>
-	<div
-	    className='button'
-	    onClick={() => globe.offerTrade(proposedTrade, yourTeam, activeTeam)}
-	>
-	    Propose Trade
 	</div>
     </React.Fragment>
 );

@@ -35,27 +35,28 @@ body {
     color: black;
 }
 
-.spaceButton {
+.button {
+    display: flex;
+    justify-content: center;
+    min-width: 160px;
     padding-left: 10px;
     padding-right: 10px;
     width: max-content;
     border: black solid 2px;
     cursor: pointer;
     background-color: Gainsboro;
+}
+
+.playButtons {
+    display: flex;
+    flex: 1;
+    justify-content: center;
 }
 
 .inactivePage, .activePage {
     padding-left: 10px;
     padding-right: 10px;
     cursor: pointer;
-}
-
-
-.button {
-    width: max-content;
-    border: black solid 2px;
-    cursor: pointer;
-    background-color: Gainsboro;
 }
 
 .animated {
@@ -80,12 +81,6 @@ body {
 .field {
     display: flex;
     justify-content: center;
-}
-
-.endzone {
-    width: 2em;
-    height: 10em;
-    background-color: DarkGreen;
 }
 
 .fiveYards {
@@ -191,12 +186,6 @@ body {
     flex: 1;
 }
 
-.playButtons {
-    display: flex;
-    flex: 1;
-    justify-content: center;
-}
-
 .centerBigFlex {
     display: flex;
     flex: 1;
@@ -256,6 +245,18 @@ body {
 
 .headerThree {
     font-weight: bold;
+}
+
+.content {
+    display: flex;
+    flex: 1;
+    overflow: auto;
+}
+
+.box {
+    display: flex;
+    min-height: min-content;
+    flex-direction: column;
 }
 
 select {
